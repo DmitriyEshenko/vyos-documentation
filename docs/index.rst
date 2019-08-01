@@ -15,27 +15,36 @@ as a router and firewall platform for cloud deployments.
     :caption: Contents:
     :includehidden:
 
+    history.rst
     install.rst
     cli.rst
     quick-start.rst
     configuration-overview.rst
     interfaces/index.rst
-    routing.rst
+    routing/index.rst
     firewall.rst
     nat.rst
-    vpn.rst
+    vpn/index.rst
     qos.rst
     services/index.rst
     system/index.rst
     high-availability.rst
     clustering.rst
+    load-balancing.rst
     image-mgmt.rst
     commandscripting.rst
-    troubleshooting.rst
-    examples/index.rst
-    commandtree/index.rst
-    vyos-on-baremetal.rst
-    releasenotes.rst
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Appendix:
+    :includehidden:
+
+    appendix/releasenotes.rst
+    appendix/troubleshooting.rst
+    appendix/examples/index.rst
+    appendix/commandtree/index.rst
+    appendix/vyos-on-baremetal.rst
+    appendix/migrate-from-vyatta.rst
 
 .. toctree::
     :maxdepth: 2

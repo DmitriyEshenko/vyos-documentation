@@ -41,7 +41,7 @@ Connections can be locally checked via the command
 Client IP address pools
 =======================
 
-To automatically assign the client an IP address as tunnel endpoint, a client IP pool is needed. The source can be either RADIUS or a local suhbnet or IP range defintion.
+To automatically assign the client an IP address as tunnel endpoint, a client IP pool is needed. The source can be either RADIUS or a local subnet or IP range defintion.
 
 Once the local tunnel endpoint ``set service pppoe-server local-ip '10.1.1.2'`` has been defined, the client IP pool can be either defined as a range or as subnet using CIDR notation.
 If the CIDR notation is used, multiple subnets can be setup which are used sequentially.
@@ -79,6 +79,57 @@ server configured, if you wish to achieve redundancy.
   set service pppoe-server local-ip '10.1.1.2'
 
 RADIUS provides the IP addresses in the example above via Framed-IP-Address.
+
+**RADIUS sessions management DM/CoA**
+
+For remotely disconnect sessions and change some authentication parameters you can configure dae-server
+
+.. code-block:: sh
+
+  set service pppoe-server authentication radius-settings dae-server ip-address '10.1.1.2'
+  set service pppoe-server authentication radius-settings dae-server port '3799'
+  set service pppoe-server authentication radius-settings dae-server secret 'secret123'
+
+Example, from radius-server send command for disconnect client with username test
+
+.. code-block:: sh
+
+  root@radius-server:~# echo "User-Name=test" | radclient -x 10.1.1.2:3799 disconnect secret123
+  
+You can also use another attributes for identify client for disconnect, like Framed-IP-Address, Acct-Session-Id, etc.
+Result commands appears in log
+
+.. code-block:: sh
+
+  show log | match Disconnect*
+
+Example for changing rate-limit via RADIUS CoA
+
+.. code-block:: sh
+
+  echo "User-Name=test,Filter-Id=5000/4000" | radclient 10.1.1.2:3799 coa secret123
+
+Filter-Id=5000/4000 (means 5000Kbit down-stream rate and 4000Kbit up-stream rate)
+If attribute Filter-Id redefined, replace it in radius coa request
+
+
+Automatic VLAN creation
+=======================
+
+VLAN's can be created by accel-ppp on the fly if via the use of the kernel module vlan_mon, which is monitoring incoming vlans and creates the neccessary VLAN if required and allowed.
+VyOS supports the use of either VLAN ID's or entire ranges, both values can be defined at the same time for an interface.
+
+.. code-block:: sh
+
+  set service pppoe-server interface eth3 vlan-id 100
+  set service pppoe-server interface eth3 vlan-id 200
+  set service pppoe-server interface eth3 vlan-range 500-1000
+  set service pppoe-server interface eth3 vlan-range 2000-3000
+
+
+The pppoe-server will now create these VLANs if required and once the user session has been cancelled, and the VLAN is not neccessary anymore, it will remove it again.
+
+
 
 Bandwidth Shaping
 ^^^^^^^^^^^^^^^^^
@@ -129,6 +180,7 @@ The command below enables it, assuming the RADIUS connection has been setup and 
   set service pppoe-server authentication radius-settings rate-limit enable
 
 Other attributes can be used, but they have to be in one of the dictionaries in /usr/share/accel-ppp/radius.
+
 
 
 Practical Configuration Examples

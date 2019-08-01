@@ -1,7 +1,7 @@
 .. _examples:
 
-Appendix B - Configuration Examples
-===================================
+Configuration Examples
+======================
 
 This chapter contains various configuration Examples
 
@@ -11,3 +11,5 @@ This chapter contains various configuration Examples
 
    dmvpn
    zone-policy
+   bgp-ipv6-unnumbered
+   ospf-unnumbered
